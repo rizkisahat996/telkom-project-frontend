@@ -65,7 +65,6 @@ const Dashboard = () => {
             console.error('Error fetching messages:', error)
         }
     }
-
     const createNewConversation = async (message = null) => {
         try {
             await getCSRFToken()
@@ -77,37 +76,18 @@ const Dashboard = () => {
                 payload,
             )
             const newConversation = response.data.conversation || response.data
-            setConversations([newConversation, ...conversations])
+            setConversations(prevConversations => [
+                newConversation,
+                ...prevConversations,
+            ])
             setCurrentConversation(newConversation)
             setMessages(response.data.messages || [])
             setActiveConversationId(newConversation.id)
-            setRecommendedQuestions([])
+            setRecommendedQuestions(response.data.recommendedQuestions || [])
             setInput('')
         } catch (error) {
             console.error('Error creating new conversation:', error)
         }
-    }
-    const handleCreateNewConversation = () => {
-        createNewConversation()
-    }
-
-    const simulateTyping = (text, speed = 0.1) => {
-        setIsAITyping(true)
-        let i = 0
-        setDisplayedText('')
-
-        function typeChar() {
-            if (i < text.length) {
-                setDisplayedText(prev => prev + text.charAt(i))
-                i++
-                setTimeout(typeChar, speed)
-            } else {
-                setIsAITyping(false)
-                setDisplayedText('')
-            }
-        }
-
-        typeChar()
     }
 
     const handleSubmit = async e => {
@@ -116,7 +96,7 @@ const Dashboard = () => {
 
         setIsLoading(true)
         try {
-            if (!currentConversation || messages.length === 0) {
+            if (!currentConversation) {
                 await createNewConversation(input)
             } else {
                 await getCSRFToken()
@@ -145,6 +125,32 @@ const Dashboard = () => {
             console.error('Error sending message:', error)
         }
         setIsLoading(false)
+    }
+
+    const handleCreateNewConversation = () => {
+        setCurrentConversation(null)
+        setMessages([])
+        setActiveConversationId(null)
+        setRecommendedQuestions([])
+        setInput('')
+    }
+    const simulateTyping = (text, speed = 0.1) => {
+        setIsAITyping(true)
+        let i = 0
+        setDisplayedText('')
+
+        function typeChar() {
+            if (i < text.length) {
+                setDisplayedText(prev => prev + text.charAt(i))
+                i++
+                setTimeout(typeChar, speed)
+            } else {
+                setIsAITyping(false)
+                setDisplayedText('')
+            }
+        }
+
+        typeChar()
     }
 
     const handleRecommendedQuestionClick = question => {
