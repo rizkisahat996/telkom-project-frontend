@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    font-family: Arial, sans-serif;
+    color: #2dd4bf; 
+    scrollbar-width: thin;
+    scrollbar-color: #1A3636 #40534C;
+}
+
+menu,
+ol,
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
